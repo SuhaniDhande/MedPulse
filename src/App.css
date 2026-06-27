@@ -1,0 +1,226 @@
+:root {
+  color-scheme: light;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #ede3d5;
+  color: #0f172a;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 36px;
+  background: radial-gradient(circle at top, rgba(15, 118, 110, 0.12), transparent 26%),
+    linear-gradient(180deg, #ede3d5 0%, #f5efe4 100%);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  padding-bottom: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: #0f766e;
+  color: #f8fafc;
+  font-size: 1.1rem;
+  box-shadow: 0 20px 40px rgba(15, 118, 110, 0.14);
+}
+
+.topnav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.topnav a {
+  color: #475569;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.sign-in {
+  border: none;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 0.95rem 1.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.08);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.sign-in:hover {
+  transform: translateY(-1px);
+  background: #e2e8f0;
+}
+
+.hero {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  gap: 36px;
+  padding: 48px 0 12px;
+}
+
+.hero-copy {
+  max-width: 640px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 999px;
+  background: #d7f4ee;
+  color: #0f766e;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.hero h1 {
+  margin: 1.2rem 0 1rem;
+  font-size: clamp(3rem, 5vw, 5.2rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.hero h1 span {
+  color: #0f766e;
+}
+
+.hero p {
+  max-width: 46rem;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #475569;
+}
+
+.section-label {
+  display: block;
+  margin-bottom: 1.2rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.cards {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.role-card {
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 1.6rem 1.75rem;
+  border-radius: 30px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.08);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.role-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+.role-icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: #ecfeff;
+  color: #0f766e;
+  font-size: 1.5rem;
+  margin-bottom: 1.3rem;
+}
+
+.role-icon.dark {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.role-card h2 {
+  margin: 0 0 0.85rem;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: #0f172a;
+}
+
+.role-card p {
+  margin: 0 0 1.7rem;
+  color: #475569;
+  line-height: 1.8;
+}
+
+.card-link {
+  position: absolute;
+  right: 1.4rem;
+  bottom: 1.4rem;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: #d1fae5;
+  color: #065f46;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.card-link:hover {
+  transform: translateY(-1px);
+  background: #a7f3d0;
+}
+
+.app-footer {
+  margin-top: auto;
+  padding: 18px 0 4px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 20px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .topnav {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
