@@ -1,0 +1,518 @@
+/* Reception Page - Cozy & Spacious Design */
+
+.reception-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top, rgba(15, 118, 110, 0.08), transparent 30%),
+    linear-gradient(180deg, #ede3d5 0%, #f5efe4 100%);
+}
+
+/* ===== WELCOME SCREEN ===== */
+.reception-welcome {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.welcome-content {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+.welcome-header {
+  margin-bottom: 3rem;
+}
+
+.welcome-logo {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.welcome-header h1 {
+  margin: 1rem 0 0.5rem;
+  font-size: 2.5rem;
+  color: #0f172a;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.welcome-subtitle {
+  color: #0f766e;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.welcome-message {
+  background: rgba(215, 244, 238, 0.5);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(15, 118, 110, 0.1);
+}
+
+.welcome-message p {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.welcome-steps {
+  margin-bottom: 2.5rem;
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1rem;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f766e 0%, #1a9b8e 100%);
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.step-text {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
+}
+
+.welcome-button {
+  padding: 1rem 3rem;
+  background: linear-gradient(135deg, #0f766e 0%, #1a9b8e 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 16px rgba(15, 118, 110, 0.2);
+}
+
+.welcome-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+}
+
+.welcome-link {
+  display: block;
+  background: none;
+  border: none;
+  color: #0f766e;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  transition: all 0.3s ease;
+}
+
+.welcome-link:hover {
+  opacity: 0.7;
+}
+
+/* ===== STEP SCREENS ===== */
+.reception-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.step-container {
+  max-width: 700px;
+  width: 100%;
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(15, 118, 110, 0.1);
+  border: 1px solid rgba(15, 118, 110, 0.08);
+}
+
+.step-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.step-back {
+  background: none;
+  border: none;
+  color: #0f766e;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.step-back:hover {
+  transform: translateX(-4px);
+}
+
+.step-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.step-subtext {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* ===== SYMPTOM SECTION ===== */
+.symptom-section {
+  margin-bottom: 2rem;
+}
+
+.symptom-input {
+  width: 100%;
+  padding: 1.25rem;
+  border: 2px solid rgba(15, 118, 110, 0.15);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #0f172a;
+  resize: vertical;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  line-height: 1.6;
+}
+
+.symptom-input:focus {
+  outline: none;
+  border-color: #0f766e;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08);
+}
+
+.symptom-input::placeholder {
+  color: #cbd5e1;
+}
+
+.character-count {
+  margin-top: 0.75rem;
+  text-align: right;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.character-count span {
+  color: #0f766e;
+  font-weight: 600;
+}
+
+/* ===== DOCTOR SECTION ===== */
+.doctor-section {
+  margin-bottom: 2rem;
+}
+
+.doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.doctor-card-new {
+  padding: 1.5rem;
+  border: 2px solid rgba(15, 118, 110, 0.15);
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  text-align: center;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.doctor-card-new:hover:not(.unavailable) {
+  border-color: rgba(15, 118, 110, 0.4);
+  background: white;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(15, 118, 110, 0.12);
+}
+
+.doctor-card-new.selected {
+  border-color: #0f766e;
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.08) 0%, rgba(26, 155, 142, 0.08) 100%);
+  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.15);
+}
+
+.doctor-card-new.unavailable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.doctor-card-content h3 {
+  margin: 0 0 0.4rem 0;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.doctor-card-content .specialty {
+  margin: 0 0 1rem 0;
+  color: #0f766e;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.doctor-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(15, 118, 110, 0.1);
+  border-bottom: 1px solid rgba(15, 118, 110, 0.1);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1rem;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.doctor-status {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.doctor-status.available {
+  background: #d7f4ee;
+  color: #0f766e;
+}
+
+.doctor-status.unavailable {
+  background: #fecaca;
+  color: #7c2d12;
+}
+
+.selected-checkmark {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f766e 0%, #1a9b8e 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* ===== ACTION BUTTONS ===== */
+.step-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 0.95rem 2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #0f766e 0%, #1a9b8e 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+}
+
+.action-btn.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.3);
+}
+
+.action-btn.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn.secondary {
+  background: #f0f9f8;
+  color: #0f766e;
+  border: 2px solid #0f766e;
+}
+
+.action-btn.secondary:hover {
+  background: #0f766e;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .reception-welcome {
+    padding: 1.5rem;
+  }
+
+  .welcome-header h1 {
+    font-size: 2rem;
+  }
+
+  .welcome-logo {
+    font-size: 4rem;
+  }
+
+  .step-indicator {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .step-container {
+    padding: 2rem;
+    border-radius: 16px;
+  }
+
+  .step-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .doctor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .action-btn {
+    min-width: 120px;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reception-wrapper {
+    min-height: 100vh;
+  }
+
+  .reception-welcome {
+    padding: 1rem;
+  }
+
+  .welcome-logo {
+    font-size: 3rem;
+  }
+
+  .welcome-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .welcome-message {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
+  .step-container {
+    padding: 1.5rem;
+    margin: 0 0.5rem;
+  }
+
+  .step-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .symptom-input {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .doctor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-card-new {
+    min-height: 180px;
+    padding: 1.25rem;
+  }
+
+  .step-actions {
+    flex-direction: column;
+  }
+
+  .action-btn {
+    width: 100%;
+    padding: 0.85rem 1rem;
+  }
+}

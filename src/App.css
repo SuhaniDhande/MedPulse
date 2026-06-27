@@ -583,6 +583,174 @@
   }
 }
 
+/* Landing Page with scrollable content */
+.landing-page {
+  min-height: auto;
+  padding: 0;
+}
+
+.landing-page .topbar {
+  padding: 32px 36px 16px 36px;
+  background: radial-gradient(circle at top, rgba(15, 118, 110, 0.08), transparent 20%),
+    linear-gradient(180deg, #ede3d5 0%, rgba(237, 227, 213, 0.7) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-bottom: 0;
+}
+
+.landing-page .hero {
+  padding: 60px 36px;
+  background: radial-gradient(circle at top, rgba(15, 118, 110, 0.08), transparent 30%),
+    linear-gradient(180deg, #ede3d5 0%, #f5efe4 100%);
+}
+
+/* Info sections for About and Help */
+.info-section {
+  padding: 80px 36px;
+  background: white;
+}
+
+.info-section:nth-child(odd) {
+  background: #f8fafc;
+}
+
+.info-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.info-section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2rem 0;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.about-section p {
+  font-size: 1.1rem;
+  color: #475569;
+  line-height: 1.8;
+  margin-bottom: 3rem;
+  text-align: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Features grid for About */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.feature-card {
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  border: 2px solid rgba(15, 118, 110, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  border-color: #0f766e;
+  box-shadow: 0 8px 24px rgba(15, 118, 110, 0.12);
+  transform: translateY(-4px);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.75rem 0;
+}
+
+.feature-card p {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Help grid */
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.help-card {
+  padding: 1.75rem;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 118, 110, 0.1);
+}
+
+.help-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f766e;
+  margin: 0 0 1rem 0;
+}
+
+.help-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.help-card li {
+  padding: 0.5rem 0;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  border-bottom: 1px solid rgba(15, 118, 110, 0.05);
+}
+
+.help-card li:last-child {
+  border-bottom: none;
+}
+
+/* Responsive styles */
+@media (max-width: 760px) {
+  .landing-page .topbar {
+    padding: 20px;
+  }
+
+  .landing-page .hero {
+    padding: 40px 20px;
+  }
+
+  .info-section {
+    padding: 60px 20px;
+  }
+
+  .info-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .features-grid,
+  .help-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card,
+  .help-card {
+    padding: 1.5rem;
+  }
+}
+
 @media (max-width: 760px) {
   .app-shell {
     padding: 20px;

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import { AdminPanel } from './components/AdminPanel'
+import { Reception } from './components/Reception'
 
 type QueueItem = {
   token: string
@@ -15,7 +16,7 @@ type SurgeryItem = {
 }
 
 function App() {
-  const [page, setPage] = useState<'landing' | 'doctor' | 'patient' | 'appointment' | 'confirmation' | 'admin'>('landing')
+  const [page, setPage] = useState<'landing' | 'doctor' | 'patient' | 'reception' | 'appointment' | 'confirmation' | 'admin'>('reception')
   const [appointment, setAppointment] = useState({
     name: '',
     age: '',
@@ -23,6 +24,7 @@ function App() {
     history: '',
     time: '',
     preferredDoctor: '',
+    symptoms: '',
   })
   const [opdQueue, setOpdQueue] = useState<QueueItem[]>([
     { token: 'A102', name: 'Rohit Sharma', priority: 'High' },
@@ -52,6 +54,15 @@ const filteredQueue = opdQueue.filter((patient) =>
     setOpdQueue((current) => current.filter((item) => item.token !== token))
   }
 
+  const handleReceptionComplete = (selectedDoctor: string, symptoms: string) => {
+    setAppointment((prev) => ({
+      ...prev,
+      preferredDoctor: selectedDoctor,
+      symptoms: symptoms,
+    }))
+    setPage('appointment')
+  }
+
   if (page === 'patient') {
     return (
       <div className="app-shell">
@@ -77,7 +88,7 @@ const filteredQueue = opdQueue.filter((patient) =>
           </div>
 
           <section className="patient-actions">
-            <button className="patient-button" type="button" onClick={() => setPage('appointment')}>
+            <button className="patient-button" type="button" onClick={() => setPage('reception')}>
               Book Appointment
             </button>
             <button className="patient-button secondary-button" type="button">
@@ -168,6 +179,14 @@ const filteredQueue = opdQueue.filter((patient) =>
                 <option value="Dr. Priya Kulkarni">Dr. Priya Kulkarni</option>
                 <option value="Dr. Amit Deshmukh">Dr. Amit Deshmukh</option>
               </select>
+            </label>
+            <label className="form-field full-width">
+              <span>Symptoms & Chief Complaint</span>
+              <textarea
+                value={appointment.symptoms}
+                onChange={(e) => setAppointment({ ...appointment, symptoms: e.target.value })}
+                placeholder="Your symptoms as described in reception"
+              />
             </label>
             <label className="form-field full-width">
               <span>Preferred time for appointment</span>
@@ -371,8 +390,12 @@ const filteredQueue = opdQueue.filter((patient) =>
     return <AdminPanel onBack={() => setPage('landing')} />
   }
 
+  if (page === 'reception') {
+    return <Reception onProceed={handleReceptionComplete} onBack={() => setPage('patient')} />
+  }
+
   return (
-    <div className="app-shell">
+    <div className="app-shell landing-page">
       <header className="topbar">
         <div className="brand">
           <div className="brand-mark">❤️</div>
@@ -380,8 +403,14 @@ const filteredQueue = opdQueue.filter((patient) =>
         </div>
 
         <nav className="topnav">
-          <a href="#about">About</a>
-          <a href="#help">Help</a>
+          <a href="#about" onClick={(e) => {
+            e.preventDefault()
+            document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
+          }}>About</a>
+          <a href="#help" onClick={(e) => {
+            e.preventDefault()
+            document.getElementById('help')?.scrollIntoView({ behavior: 'smooth' })
+          }}>Help</a>
           <button className="sign-in">Sign in</button>
         </nav>
       </header>
@@ -424,6 +453,76 @@ const filteredQueue = opdQueue.filter((patient) =>
                 →
               </button>
             </article>
+          </div>
+        </section>
+
+        {/* About Section */}
+        <section id="about" className="info-section about-section">
+          <div className="info-container">
+            <h2>About MedPulse</h2>
+            <p>
+              MedPulse is a comprehensive hospital management system designed specifically for Indian hospitals. 
+              We streamline operations across patient care, doctor management, and administrative tasks with an 
+              intuitive, unified interface.
+            </p>
+            <div className="features-grid">
+              <div className="feature-card">
+                <div className="feature-icon">📋</div>
+                <h3>Patient Management</h3>
+                <p>Easy appointment booking, health records, and medical history tracking</p>
+              </div>
+              <div className="feature-card">
+                <div className="feature-icon">👨‍⚕️</div>
+                <h3>Doctor Dashboard</h3>
+                <p>Real-time patient queues, prescriptions, and daily schedules</p>
+              </div>
+              <div className="feature-card">
+                <div className="feature-icon">⚙️</div>
+                <h3>Admin Tools</h3>
+                <p>Bed management, billing, operations, and hospital analytics</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Help Section */}
+        <section id="help" className="info-section help-section">
+          <div className="info-container">
+            <h2>Help & Support</h2>
+            <div className="help-grid">
+              <div className="help-card">
+                <h3>Getting Started</h3>
+                <ul>
+                  <li>Choose your role: Patient, Doctor, or Admin</li>
+                  <li>Fill in your details and verify information</li>
+                  <li>Start managing appointments or operations</li>
+                </ul>
+              </div>
+              <div className="help-card">
+                <h3>For Patients</h3>
+                <ul>
+                  <li>Book appointments with your preferred doctor</li>
+                  <li>Check your medical records</li>
+                  <li>View appointment history and billing</li>
+                </ul>
+              </div>
+              <div className="help-card">
+                <h3>For Doctors</h3>
+                <ul>
+                  <li>View daily patient queues</li>
+                  <li>Access patient records and prescriptions</li>
+                  <li>Manage your schedule and availability</li>
+                </ul>
+              </div>
+              <div className="help-card">
+                <h3>Common Issues</h3>
+                <ul>
+                  <li>Can't find your appointment? Check your email</li>
+                  <li>Need to reschedule? Visit the appointments page</li>
+                  <li>Contact hospital support for urgent issues</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </section>
       </main>
