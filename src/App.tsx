@@ -35,6 +35,12 @@ function App() {
     { time: '13:15', name: 'Sunil Rao', type: 'Knee repair' },
   ]
 
+  const [searchTerm, setSearchTerm] = useState('')
+
+const filteredQueue = opdQueue.filter((patient) =>
+  patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+)
+
   const summary = {
     today: 84,
     waiting: 16,
@@ -270,6 +276,20 @@ function App() {
                 <span className="eyebrow queue-label">Live OPD queue</span>
               </div>
             </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <input
+                type="text"
+                placeholder="Search patient..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                padding: '10px',
+                width: '250px',
+               borderRadius: '8px',
+              border: '1px solid #ccc'
+             }}
+          />
+</div>
             <div className="table-wrap">
               <table className="queue-table">
                 <thead>
@@ -281,7 +301,7 @@ function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {opdQueue.map((item) => (
+                  {filteredQueue.map((item) => (
                     <tr key={item.token}>
                       <td>{item.token}</td>
                       <td>{item.name}</td>
