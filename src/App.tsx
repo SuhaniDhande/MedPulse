@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import { AdminPanel } from './components/AdminPanel'
 
 type QueueItem = {
   token: string
@@ -14,7 +15,7 @@ type SurgeryItem = {
 }
 
 function App() {
-  const [page, setPage] = useState<'landing' | 'doctor' | 'patient' | 'appointment' | 'confirmation'>('landing')
+  const [page, setPage] = useState<'landing' | 'doctor' | 'patient' | 'appointment' | 'confirmation' | 'admin'>('landing')
   const [appointment, setAppointment] = useState({
     name: '',
     age: '',
@@ -366,6 +367,10 @@ const filteredQueue = opdQueue.filter((patient) =>
     )
   }
 
+  if (page === 'admin') {
+    return <AdminPanel onBack={() => setPage('landing')} />
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -415,9 +420,9 @@ const filteredQueue = opdQueue.filter((patient) =>
               <div className="role-icon dark">🏥</div>
               <h2>Administrative staff</h2>
               <p>Beds, billing, and operations</p>
-              <a href="#admin" className="card-link">
+              <button className="card-link" onClick={() => setPage('admin')}>
                 →
-              </a>
+              </button>
             </article>
           </div>
         </section>
