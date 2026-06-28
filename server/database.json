@@ -79,7 +79,7 @@
       "doctorId": 2,
       "date": "2024-01-16",
       "time": "11:00 AM",
-      "status": "pending",
+      "status": "confirmed",
       "reason": "Consultation"
     },
     {
@@ -100,7 +100,7 @@
       "time": "12:00",
       "preferredDoctor": "Dr. Rajesh Kumar",
       "symptoms": "Fever",
-      "status": "pending"
+      "status": "confirmed"
     },
     {
       "id": 5,
@@ -111,7 +111,7 @@
       "time": "12:00",
       "preferredDoctor": "Dr. Rajesh Kumar",
       "symptoms": "Fever",
-      "status": "pending"
+      "status": "confirmed"
     },
     {
       "id": 6,
@@ -122,7 +122,7 @@
       "time": "",
       "preferredDoctor": "Dr. Priya Singh",
       "symptoms": ".",
-      "status": "pending"
+      "status": "confirmed"
     },
     {
       "id": 7,
@@ -133,13 +133,90 @@
       "time": "",
       "preferredDoctor": "Dr. Priya Singh",
       "symptoms": ".",
-      "status": "pending"
+      "status": "confirmed"
+    },
+    {
+      "id": 8,
+      "name": "Meet",
+      "age": "19",
+      "sex": "Male",
+      "history": "NA",
+      "time": "14:00",
+      "preferredDoctor": "Dr. Rajesh Kumar",
+      "symptoms": "Fever\n",
+      "status": "confirmed"
+    },
+    {
+      "id": 9,
+      "name": "Meet",
+      "age": "19",
+      "sex": "Male",
+      "history": "NA",
+      "time": "14:00",
+      "preferredDoctor": "Dr. Rajesh Kumar",
+      "symptoms": "Fever\n",
+      "status": "confirmed"
+    },
+    {
+      "id": 10,
+      "name": "",
+      "age": "",
+      "sex": "",
+      "history": "",
+      "time": "",
+      "preferredDoctor": "Dr. Priya Singh",
+      "symptoms": "dcf",
+      "status": "confirmed"
+    },
+    {
+      "id": 11,
+      "name": "aaa",
+      "age": "23",
+      "sex": "Male",
+      "history": "33",
+      "time": "12:33",
+      "preferredDoctor": "Dr. Smith",
+      "symptoms": "aaaa",
+      "status": "confirmed"
+    },
+    {
+      "id": 12,
+      "name": "aaa",
+      "age": "23",
+      "sex": "Male",
+      "history": "33",
+      "time": "12:33",
+      "preferredDoctor": "Dr. Priya Singh",
+      "symptoms": "fever\n",
+      "status": "confirmed"
+    },
+    {
+      "id": 13,
+      "name": "Meet",
+      "age": "19",
+      "sex": "Male",
+      "history": "NA",
+      "time": "12:00",
+      "preferredDoctor": "Dr. Smith",
+      "symptoms": "Chest Pain",
+      "status": "confirmed"
+    },
+    {
+      "id": 14,
+      "name": "Meet",
+      "age": "19",
+      "sex": "Male",
+      "history": "Hypertension \n",
+      "time": "12:00",
+      "preferredDoctor": "Dr. Johnson",
+      "symptoms": "Chest Pain",
+      "status": "confirmed"
     }
   ],
   "analytics": {
     "totalPatients": 3,
     "admittedPatients": 1,
-    "pendingAppointments": 5,
+    "pendingAppointments": 0,
     "approvedAppointments": 2,
     "totalDoctors": 3
   }

@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+console.log("🔥 THIS IS THE FILE BEING EXECUTED");
 const PORT = 4000;
 const DB_FILE = path.join(__dirname, 'database.json');
 
@@ -195,6 +196,74 @@ app.post('/api/reset', (req, res) => {
 });
 
 initDB();
+
+app.get('/api/dashboard', (req, res) => {
+  const db = readDB()
+
+  res.json({
+    totalDoctors: db.doctors.length,
+    availableDoctors: db.doctors.length,
+    totalPatients: db.patients.length,
+    totalAppointmentsToday: db.appointments.length,
+    patientsInQueue: 0,
+    today: db.appointments.length,
+    waiting: db.appointments.filter(a => a.status === 'pending').length,
+    surgeries: 0,
+  })
+})
+
+app.get('/api/queue', (req, res) => {
+  res.json([])
+})
+
+app.get('/api/surgeries', (req, res) => {
+  res.json([])
+})
+
+app.get('/api/admin/overview', (req, res) => {
+  const db = readDB()
+
+  res.json({
+    doctors: db.doctors,
+    patients: db.patients,
+    appointments: db.appointments,
+    queue: [],
+    surgeries: [],
+    stats: {
+      totalDoctors: db.doctors.length,
+      availableDoctors: db.doctors.length,
+      totalPatients: db.patients.length,
+      totalAppointmentsToday: db.appointments.length,
+      patientsInQueue: 0,
+      today: db.appointments.length,
+      waiting: db.appointments.filter(a => a.status === 'pending').length,
+      surgeries: 0,
+    }
+  })
+})
+
+app.get('/test123', (req, res) => {
+  res.send('HELLO TEST')
+})
+
+app.patch('/api/appointments/:id/status', (req, res) => {
+  const db = readDB()
+
+  const appointment = db.appointments.find(
+    a => a.id === parseInt(req.params.id)
+  )
+
+  if (!appointment) {
+    return res.status(404).json({ error: 'Appointment not found' })
+  }
+
+  appointment.status = req.body.status
+
+  writeDB(db)
+  updateAnalytics()
+
+  res.json(appointment)
+})
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

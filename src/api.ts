@@ -111,4 +111,22 @@ export const api = {
   updateAppointmentStatus: (appointmentId: string, status: Appointment['status']) =>
     request<Appointment>(`/appointments/${appointmentId}/status`, { method: 'PATCH', json: { status } }),
   getAdminOverview: () => request<AdminOverview>('/admin/overview'),
+  // New endpoints for appointment management
+  getAppointmentsByDoctor: (doctorName: string) =>
+    request<Appointment[]>(`/appointments/doctor/${doctorName}`),
+  getAppointmentCount: (doctorName: string) =>
+    request<{ approved: number; pending: number; rejected: number; total: number }>(
+      `/appointments/count/${doctorName}`
+    ),
+  approveAppointment: (appointmentId: string, approvedBy?: string) =>
+    request<{ success: boolean; appointment: Appointment }>(`/admin/appointments/${appointmentId}/approve`, {
+      method: 'POST',
+      json: { approvedBy },
+    }),
+  rejectAppointment: (appointmentId: string, rejectionReason?: string) =>
+    request<{ success: boolean; appointment: Appointment }>(`/admin/appointments/${appointmentId}/reject`, {
+      method: 'POST',
+      json: { rejectionReason },
+    }),
+  getPendingAppointments: () => request<Appointment[]>('/admin/appointments/pending'),
 }
