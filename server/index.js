@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 console.log("🔥 THIS IS THE FILE BEING EXECUTED");
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 const DB_FILE = path.join(__dirname, 'database.json');
 
 app.use(cors());
