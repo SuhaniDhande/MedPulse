@@ -1,243 +1,234 @@
-import { useState } from 'react'
-import './AdminPanel.css'
+import { useEffect, useState } from 'react'
+import type { Appointment } from '../api'
+import { api } from '../api'
 
-type Doctor = {
-  id: string
-  name: string
-  specialty: string
-  available: boolean
-  patientsToday: number
+interface AdminPanelProps {
+  onBack: () => void
 }
 
-type Patient = {
+interface Patient {
   id: string
   name: string
-  email: string
   age: number
-  sex: string
-}
-
-type Appointment = {
-  id: string
-  patientName: string
-  doctorName: string
-  time: string
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled'
-}
-
-type QueueItem = {
-  token: string
-  name: string
-  priority: string
+  phone: string
+  department: string
+  status: 'admitted' | 'pending' | 'approved'
+  appointmentTime: string
+  priority: 'high' | 'medium' | 'low'
   assignedDoctor: string
 }
 
-export function AdminPanel({ onBack }: { onBack: () => void }) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'appointments' | 'queue' | 'availability' | 'analytics'>('dashboard')
+export function AdminPanel({ onBack }: AdminPanelProps) {
+  const [patients, setPatients] = useState<Patient[]>([])
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [activeTab, setActiveTab] = useState<'patients' | 'appointments' | 'analytics'>('patients')
+  const [selectedAppointment, setSelectedAppointment] = useState<string | null>(null)
+  const [rescheduleData, setRescheduleData] = useState({ date: '', time: '' })
+  const [editingPriority, setEditingPriority] = useState<string | null>(null)
+  const [newPriority, setNewPriority] = useState<'high' | 'medium' | 'low'>('medium')
+  const [analyticsData, setAnalyticsData] = useState({
+    totalPatients: 0,
+    admittedPatients: 0,
+    pendingAppointments: 0,
+    approvedAppointments: 0,
+    totalDoctors: 0,
+  })
 
-  // Sample data
-  const [doctors, setDoctors] = useState<Doctor[]>([
-    { id: '1', name: 'Dr. Ananya Rao', specialty: 'General Medicine', available: true, patientsToday: 12 },
-    { id: '2', name: 'Dr. Siddharth Nair', specialty: 'Cardiology', available: false, patientsToday: 8 },
-    { id: '3', name: 'Dr. Priya Kulkarni', specialty: 'Pediatrics', available: true, patientsToday: 15 },
-    { id: '4', name: 'Dr. Amit Deshmukh', specialty: 'Orthopedics', available: true, patientsToday: 10 },
-  ])
+  useEffect(() => {
+    loadData()
+    // Refresh data every 10 seconds for dynamic analytics
+    const interval = setInterval(loadData, 10000)
+    return () => clearInterval(interval)
+  }, [])
 
-  const [patients, _setPatients] = useState<Patient[]>([
-    { id: 'P001', name: 'Rohit Sharma', email: 'rohit@mail.com', age: 35, sex: 'Male' },
-    { id: 'P002', name: 'Geeta Patel', email: 'geeta@mail.com', age: 28, sex: 'Female' },
-    { id: 'P003', name: 'Anjali Mehta', email: 'anjali@mail.com', age: 42, sex: 'Female' },
-    { id: 'P004', name: 'Vikram Singh', email: 'vikram@mail.com', age: 55, sex: 'Male' },
-  ])
-
-  const [appointments, setAppointments] = useState<Appointment[]>([
-    { id: 'A001', patientName: 'Rohit Sharma', doctorName: 'Dr. Ananya Rao', time: '09:30', status: 'confirmed' },
-    { id: 'A002', patientName: 'Geeta Patel', doctorName: 'Dr. Priya Kulkarni', time: '10:00', status: 'pending' },
-    { id: 'A003', patientName: 'Anjali Mehta', doctorName: 'Dr. Amit Deshmukh', time: '11:00', status: 'confirmed' },
-  ])
-
-  const [queue, setQueue] = useState<QueueItem[]>([
-    { token: 'A102', name: 'Rohit Sharma', priority: 'High', assignedDoctor: 'Dr. Ananya Rao' },
-    { token: 'A103', name: 'Geeta Patel', priority: 'Medium', assignedDoctor: 'Dr. Priya Kulkarni' },
-    { token: 'A104', name: 'Anjali Mehta', priority: 'Low', assignedDoctor: 'Dr. Amit Deshmukh' },
-  ])
-
-  // Statistics
-  const stats = {
-    totalDoctors: doctors.length,
-    availableDoctors: doctors.filter(d => d.available).length,
-    totalPatients: patients.length,
-    totalAppointmentsToday: appointments.filter(a => a.status === 'confirmed').length,
-    patientsInQueue: queue.length,
-  }
-
-  const handleToggleDoctorAvailability = (doctorId: string) => {
-    setDoctors(doctors.map(d => 
-      d.id === doctorId ? { ...d, available: !d.available } : d
-    ))
-  }
-
-  const handleReassignPatient = (queueToken: string, newDoctorId: string) => {
-    const newDoctor = doctors.find(d => d.id === newDoctorId)
-    if (newDoctor) {
-      setQueue(queue.map(item =>
-        item.token === queueToken ? { ...item, assignedDoctor: newDoctor.name } : item
-      ))
+  const loadData = async () => {
+    try {
+      // Fetch appointments
+      const appointmentsRes = await api.getAdminOverview()
+      setAppointments(appointmentsRes.appointments)
+      setAnalyticsData(appointmentsRes.stats)
+      
+      // Mock patients data - In a real app, you'd fetch this from your API
+      const mockPatients: Patient[] = [
+        { id: '1', name: 'John Doe', age: 45, phone: '9876543210', department: 'Cardiology', status: 'admitted', appointmentTime: '10:00 AM', priority: 'high', assignedDoctor: 'Dr. Smith' },
+        { id: '2', name: 'Jane Smith', age: 34, phone: '9876543211', department: 'Neurology', status: 'pending', appointmentTime: '11:00 AM', priority: 'medium', assignedDoctor: 'Dr. Johnson' },
+        { id: '3', name: 'Mike Brown', age: 52, phone: '9876543212', department: 'Orthopedics', status: 'approved', appointmentTime: '02:00 PM', priority: 'low', assignedDoctor: 'Dr. Williams' },
+      ]
+      setPatients(mockPatients)
+    } catch (error) {
+      console.error('Error loading admin data:', error)
     }
   }
 
-  const handleCancelAppointment = (appointmentId: string) => {
-    setAppointments(appointments.map(a =>
-      a.id === appointmentId ? { ...a, status: 'cancelled' } : a
-    ))
+  const handleApproveAppointment = async (appointmentId: string) => {
+    try {
+      await api.updateAppointmentStatus(appointmentId, 'confirmed')
+      setAppointments(appointments.map(a => a.id === appointmentId ? { ...a, status: 'confirmed' } : a))
+    } catch (error) {
+      console.error('Error approving appointment:', error)
+    }
   }
 
-  const handleCompleteAppointment = (appointmentId: string) => {
-    setAppointments(appointments.map(a =>
-      a.id === appointmentId ? { ...a, status: 'completed' } : a
-    ))
+  const handleRescheduleAppointment = async (appointmentId: string) => {
+    if (!rescheduleData.date || !rescheduleData.time) {
+      alert('Please select both date and time')
+      return
+    }
+    try {
+      // You would need to update your API to support rescheduling
+      await api.updateAppointmentStatus(appointmentId, 'confirmed')
+      setAppointments(appointments.map(a => 
+        a.id === appointmentId ? { ...a, time: rescheduleData.time } : a
+      ))
+      setSelectedAppointment(null)
+      setRescheduleData({ date: '', time: '' })
+    } catch (error) {
+      console.error('Error rescheduling appointment:', error)
+    }
   }
 
-  const handleRemoveFromQueue = (token: string) => {
-    setQueue(queue.filter(item => item.token !== token))
+  const handleUpdatePriority = (patientId: string) => {
+    setPatients(patients.map(p => 
+      p.id === patientId ? { ...p, priority: newPriority } : p
+    ))
+    setEditingPriority(null)
   }
+
+  const pendingAppointments = appointments.filter(a => a.status === 'pending')
+  const confirmedAppointments = appointments.filter(a => a.status === 'confirmed')
 
   return (
-    <div className="admin-panel">
-      <header className="admin-header">
-        <div className="admin-title">
-          <h1>Administration Dashboard</h1>
-          <p>Manage hospital operations, staff, and appointments</p>
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="brand">
+          <div className="brand-mark">MP</div>
+          <span>MedPulse</span>
         </div>
-        <button className="back-button" onClick={onBack}>
-          ← Back to Home
-        </button>
+        <nav className="topnav">
+          <button className="secondary-button" onClick={onBack}>
+            Back to Home
+          </button>
+        </nav>
       </header>
 
-      {/* Stats Overview */}
-      <section className="admin-stats">
-        <div className="stat-card">
-          <div className="stat-label">Total Doctors</div>
-          <div className="stat-value">{stats.totalDoctors}</div>
-          <div className="stat-detail">{stats.availableDoctors} available</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Total Patients</div>
-          <div className="stat-value">{stats.totalPatients}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Appointments Today</div>
-          <div className="stat-value">{stats.totalAppointmentsToday}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Queue Length</div>
-          <div className="stat-value">{stats.patientsInQueue}</div>
-        </div>
-      </section>
-
-      {/* Navigation Tabs */}
-      <nav className="admin-tabs">
-        <button
-          className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
-        >
-          📊 Dashboard
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'users' ? 'active' : ''}`}
-          onClick={() => setActiveTab('users')}
-        >
-          👥 Users
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'appointments' ? 'active' : ''}`}
-          onClick={() => setActiveTab('appointments')}
-        >
-          📅 Appointments
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'queue' ? 'active' : ''}`}
-          onClick={() => setActiveTab('queue')}
-        >
-          📋 Queue Management
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'availability' ? 'active' : ''}`}
-          onClick={() => setActiveTab('availability')}
-        >
-          ⏰ Doctor Availability
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'analytics' ? 'active' : ''}`}
-          onClick={() => setActiveTab('analytics')}
-        >
-          📈 Analytics
-        </button>
-      </nav>
-
-      {/* Tab Content */}
-      <section className="admin-content">
-        {/* Dashboard Tab */}
-        {activeTab === 'dashboard' && (
-          <div className="tab-content">
-            <h2>Overview</h2>
-            <div className="dashboard-grid">
-              <div className="card">
-                <h3>Quick Actions</h3>
-                <div className="action-buttons">
-                  <button className="action-btn">+ Add Doctor</button>
-                  <button className="action-btn">+ Add Patient</button>
-                  <button className="action-btn">+ New Appointment</button>
-                </div>
-              </div>
-              <div className="card">
-                <h3>System Status</h3>
-                <div className="status-item">
-                  <span>Doctors Available</span>
-                  <span className="status-badge available">{stats.availableDoctors}/{stats.totalDoctors}</span>
-                </div>
-                <div className="status-item">
-                  <span>System Health</span>
-                  <span className="status-badge healthy">Operational</span>
-                </div>
-              </div>
-            </div>
+      <main className="doctor-page">
+        <div className="dashboard-header">
+          <div>
+            <span className="eyebrow">Administrative Dashboard</span>
+            <h1>Hospital Operations</h1>
           </div>
-        )}
+        </div>
 
-        {/* Users Management Tab */}
-        {activeTab === 'users' && (
-          <div className="tab-content">
-            <h2>User Management</h2>
+        {/* Analytics Overview */}
+        <section className="summary-card">
+          <div className="summary-item">
+            <p>Total Patients</p>
+            <strong>{analyticsData.totalPatients}</strong>
+          </div>
+          <div className="summary-item">
+            <p>Admitted</p>
+            <strong>{analyticsData.admittedPatients}</strong>
+          </div>
+          <div className="summary-item">
+            <p>Pending Appointments</p>
+            <strong>{analyticsData.pendingAppointments}</strong>
+          </div>
+          <div className="summary-item">
+            <p>Approved Appointments</p>
+            <strong>{analyticsData.approvedAppointments}</strong>
+          </div>
+        </section>
 
-            {/* Doctors Section */}
-            <div className="section">
-              <h3>Doctors</h3>
+        {/* Tab Navigation */}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid rgba(15, 23, 42, 0.08)' }}>
+          <button
+            onClick={() => setActiveTab('appointments')}
+            style={{
+              padding: '1rem 1.5rem',
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              borderBottom: activeTab === 'appointments' ? '3px solid #0f766e' : 'none',
+              color: activeTab === 'appointments' ? '#0f766e' : '#64748b',
+              fontWeight: activeTab === 'appointments' ? 700 : 600,
+              fontSize: '1rem',
+            }}
+          >
+            Pending Appointments ({pendingAppointments.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('patients')}
+            style={{
+              padding: '1rem 1.5rem',
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              borderBottom: activeTab === 'patients' ? '3px solid #0f766e' : 'none',
+              color: activeTab === 'patients' ? '#0f766e' : '#64748b',
+              fontWeight: activeTab === 'patients' ? 700 : 600,
+              fontSize: '1rem',
+            }}
+          >
+            Patient Management
+          </button>
+          <button
+            onClick={() => setActiveTab('analytics')}
+            style={{
+              padding: '1rem 1.5rem',
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              borderBottom: activeTab === 'analytics' ? '3px solid #0f766e' : 'none',
+              color: activeTab === 'analytics' ? '#0f766e' : '#64748b',
+              fontWeight: activeTab === 'analytics' ? 700 : 600,
+              fontSize: '1rem',
+            }}
+          >
+            Analytics
+          </button>
+        </div>
+
+        {/* Pending Appointments Tab */}
+        {activeTab === 'appointments' && (
+          <section className="queue-section">
+            <div className="queue-title-row">
+              <span className="eyebrow queue-label">New Appointments Requiring Approval</span>
+            </div>
+            {pendingAppointments.length === 0 ? (
+              <p className="no-data">No pending appointments</p>
+            ) : (
               <div className="table-wrap">
-                <table className="data-table">
+                <table className="queue-table">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Specialty</th>
-                      <th>Patients Today</th>
-                      <th>Status</th>
+                      <th>Patient</th>
+                      <th>Doctor</th>
+                      <th>Time</th>
+                      <th>Symptoms</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {doctors.map((doctor) => (
-                      <tr key={doctor.id}>
-                        <td>{doctor.name}</td>
-                        <td>{doctor.specialty}</td>
-                        <td>{doctor.patientsToday}</td>
+                    {pendingAppointments.map((apt) => (
+                      <tr key={apt.id}>
+                        <td>{apt.patientName}</td>
+                        <td>{apt.doctorName}</td>
+                        <td>{apt.time}</td>
+                        <td>{apt.symptoms || '-'}</td>
                         <td>
-                          <span className={`status-badge ${doctor.available ? 'available' : 'unavailable'}`}>
-                            {doctor.available ? 'Available' : 'Unavailable'}
-                          </span>
-                        </td>
-                        <td>
-                          <button className="action-link" onClick={() => handleToggleDoctorAvailability(doctor.id)}>
-                            {doctor.available ? 'Mark Unavailable' : 'Mark Available'}
+                          <button
+                            className="action-button"
+                            onClick={() => handleApproveAppointment(apt.id)}
+                            style={{ marginRight: '0.5rem' }}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="action-button"
+                            onClick={() => setSelectedAppointment(apt.id)}
+                            style={{ background: '#f59e0b' }}
+                          >
+                            Reschedule
                           </button>
                         </td>
                       </tr>
@@ -245,271 +236,201 @@ export function AdminPanel({ onBack }: { onBack: () => void }) {
                   </tbody>
                 </table>
               </div>
-            </div>
-
-            {/* Patients Section */}
-            <div className="section">
-              <h3>Patients</h3>
-              <div className="table-wrap">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Patient ID</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Age</th>
-                      <th>Sex</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {patients.map((patient) => (
-                      <tr key={patient.id}>
-                        <td>{patient.id}</td>
-                        <td>{patient.name}</td>
-                        <td>{patient.email}</td>
-                        <td>{patient.age}</td>
-                        <td>{patient.sex}</td>
-                        <td>
-                          <button className="action-link">View Profile</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Appointments Tab */}
-        {activeTab === 'appointments' && (
-          <div className="tab-content">
-            <h2>Appointment Management</h2>
-            <div className="table-wrap">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Patient</th>
-                    <th>Doctor</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.map((appointment) => (
-                    <tr key={appointment.id}>
-                      <td>{appointment.id}</td>
-                      <td>{appointment.patientName}</td>
-                      <td>{appointment.doctorName}</td>
-                      <td>{appointment.time}</td>
-                      <td>
-                        <span className={`status-badge ${appointment.status}`}>
-                          {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-                        </span>
-                      </td>
-                      <td className="action-cell">
-                        {appointment.status === 'confirmed' && (
-                          <>
-                            <button className="action-link success" onClick={() => handleCompleteAppointment(appointment.id)}>
-                              Complete
-                            </button>
-                            <button className="action-link danger" onClick={() => handleCancelAppointment(appointment.id)}>
-                              Cancel
-                            </button>
-                          </>
-                        )}
-                        {appointment.status === 'pending' && (
-                          <>
-                            <button className="action-link">Confirm</button>
-                            <button className="action-link danger" onClick={() => handleCancelAppointment(appointment.id)}>
-                              Cancel
-                            </button>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* Queue Management Tab */}
-        {activeTab === 'queue' && (
-          <div className="tab-content">
-            <h2>Queue Management</h2>
-            <div className="table-wrap">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Token</th>
-                    <th>Patient Name</th>
-                    <th>Priority</th>
-                    <th>Assigned Doctor</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {queue.map((item) => (
-                    <tr key={item.token}>
-                      <td className="token-cell">{item.token}</td>
-                      <td>{item.name}</td>
-                      <td>
-                        <span className={`priority-pill ${item.priority.toLowerCase()}`}>
-                          {item.priority}
-                        </span>
-                      </td>
-                      <td>{item.assignedDoctor}</td>
-                      <td className="action-cell">
-                        <select
-                          className="reassign-select"
-                          defaultValue={item.assignedDoctor}
-                          onChange={(e) => handleReassignPatient(item.token, e.target.value)}
-                        >
-                          <option value="">Reassign to...</option>
-                          {doctors.filter(d => d.available).map((doctor) => (
-                            <option key={doctor.id} value={doctor.id}>
-                              {doctor.name}
-                            </option>
-                          ))}
-                        </select>
-                        <button className="action-link danger" onClick={() => handleRemoveFromQueue(item.token)}>
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {queue.length === 0 && (
-              <div className="empty-state">
-                <p>No patients in queue</p>
-              </div>
             )}
-          </div>
-        )}
 
-        {/* Doctor Availability Tab */}
-        {activeTab === 'availability' && (
-          <div className="tab-content">
-            <h2>Doctor Availability Management</h2>
-            <div className="availability-grid">
-              {doctors.map((doctor) => (
-                <div key={doctor.id} className="availability-card">
-                  <div className="doctor-info">
-                    <h4>{doctor.name}</h4>
-                    <p>{doctor.specialty}</p>
-                    <p className="patients-info">{doctor.patientsToday} patients today</p>
-                  </div>
-                  <div className="availability-status">
-                    <div className={`status-indicator ${doctor.available ? 'available' : 'unavailable'}`}>
-                      {doctor.available ? '✓ Available' : '✗ Unavailable'}
-                    </div>
-                  </div>
-                  <div className="availability-actions">
+            {/* Reschedule Modal */}
+            {selectedAppointment && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.5)',
+                display: 'grid',
+                placeItems: 'center',
+                zIndex: 1000,
+              }}>
+                <div style={{
+                  background: 'white',
+                  padding: '2rem',
+                  borderRadius: '16px',
+                  maxWidth: '500px',
+                  width: '90%',
+                }}>
+                  <h2 style={{ marginTop: 0 }}>Reschedule Appointment</h2>
+                  <label className="form-field">
+                    <span>New Date</span>
+                    <input
+                      type="date"
+                      value={rescheduleData.date}
+                      onChange={(e) => setRescheduleData({ ...rescheduleData, date: e.target.value })}
+                    />
+                  </label>
+                  <label className="form-field">
+                    <span>New Time</span>
+                    <input
+                      type="time"
+                      value={rescheduleData.time}
+                      onChange={(e) => setRescheduleData({ ...rescheduleData, time: e.target.value })}
+                    />
+                  </label>
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
                     <button
-                      className={`toggle-btn ${doctor.available ? 'unavailable-btn' : 'available-btn'}`}
-                      onClick={() => handleToggleDoctorAvailability(doctor.id)}
+                      className="patient-button"
+                      onClick={() => handleRescheduleAppointment(selectedAppointment)}
                     >
-                      {doctor.available ? 'Mark Unavailable' : 'Mark Available'}
+                      Save
+                    </button>
+                    <button
+                      className="patient-button"
+                      style={{ background: '#94a3b8' }}
+                      onClick={() => setSelectedAppointment(null)}
+                    >
+                      Cancel
                     </button>
                   </div>
-                  {!doctor.available && (
-                    <div className="alert-info">
-                      <p>When unavailable, new patients will be assigned to available doctors</p>
-                    </div>
-                  )}
                 </div>
-              ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Patient Management Tab */}
+        {activeTab === 'patients' && (
+          <section className="queue-section">
+            <div className="queue-title-row">
+              <span className="eyebrow">Manage Patient Priority</span>
             </div>
-          </div>
+            <div className="table-wrap">
+              <table className="queue-table">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Age</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {patients.map((patient) => (
+                    <tr key={patient.id}>
+                      <td>{patient.name}</td>
+                      <td>{patient.age}</td>
+                      <td>{patient.department}</td>
+                      <td>
+                        <span style={{
+                          padding: '0.4rem 0.8rem',
+                          borderRadius: '999px',
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          background: patient.status === 'admitted' ? '#fecaca' : patient.status === 'approved' ? '#a7f3d0' : '#fcd34d',
+                          color: patient.status === 'admitted' ? '#7f1d1d' : patient.status === 'approved' ? '#065f46' : '#78350f',
+                        }}>
+                          {patient.status}
+                        </span>
+                      </td>
+                      <td>
+                        {editingPriority === patient.id ? (
+                          <select
+                            value={newPriority}
+                            onChange={(e) => setNewPriority(e.target.value as any)}
+                            style={{ padding: '0.5rem' }}
+                          >
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                          </select>
+                        ) : (
+                          <span className={`priority-pill ${patient.priority}`}>
+                            <span className="priority-dot" />
+                            {patient.priority}
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        {editingPriority === patient.id ? (
+                          <>
+                            <button
+                              className="action-button"
+                              onClick={() => handleUpdatePriority(patient.id)}
+                              style={{ marginRight: '0.5rem', fontSize: '0.85rem', padding: '0.5rem 0.75rem' }}
+                            >
+                              Save
+                            </button>
+                            <button
+                              className="action-button"
+                              style={{ background: '#94a3b8', fontSize: '0.85rem', padding: '0.5rem 0.75rem' }}
+                              onClick={() => setEditingPriority(null)}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            className="action-button"
+                            onClick={() => {
+                              setEditingPriority(patient.id)
+                              setNewPriority(patient.priority)
+                            }}
+                          >
+                            Edit
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
         )}
 
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (
-          <div className="tab-content">
-            <h2>Analytics & Reports</h2>
-            <div className="analytics-grid">
-              <div className="analytics-card">
-                <h3>Appointment Metrics</h3>
-                <div className="metric">
-                  <span>Total Appointments</span>
-                  <strong>{appointments.length}</strong>
-                </div>
-                <div className="metric">
-                  <span>Confirmed</span>
-                  <strong>{appointments.filter(a => a.status === 'confirmed').length}</strong>
-                </div>
-                <div className="metric">
-                  <span>Pending</span>
-                  <strong>{appointments.filter(a => a.status === 'pending').length}</strong>
-                </div>
-                <div className="metric">
-                  <span>Cancelled</span>
-                  <strong>{appointments.filter(a => a.status === 'cancelled').length}</strong>
-                </div>
+          <section className="queue-section">
+            <div className="queue-title-row">
+              <h2>Hospital Analytics (Updates every 10 seconds)</h2>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+              <div style={{ padding: '1.5rem', background: '#ecfdf5', borderRadius: '12px', textAlign: 'center' }}>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Total Patients</p>
+                <strong style={{ fontSize: '2.5rem', color: '#0f766e', display: 'block', marginTop: '0.5rem' }}>
+                  {analyticsData.totalPatients}
+                </strong>
               </div>
-
-              <div className="analytics-card">
-                <h3>Doctor Utilization</h3>
-                {doctors.map((doctor) => (
-                  <div key={doctor.id} className="utilization-bar">
-                    <span className="doctor-name">{doctor.name}</span>
-                    <div className="bar-container">
-                      <div
-                        className="bar-fill"
-                        style={{ width: `${(doctor.patientsToday / 20) * 100}%` }}
-                      />
-                    </div>
-                    <span className="patient-count">{doctor.patientsToday}</span>
-                  </div>
-                ))}
+              <div style={{ padding: '1.5rem', background: '#fecaca', borderRadius: '12px', textAlign: 'center' }}>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Admitted Patients</p>
+                <strong style={{ fontSize: '2.5rem', color: '#991b1b', display: 'block', marginTop: '0.5rem' }}>
+                  {analyticsData.admittedPatients}
+                </strong>
               </div>
-
-              <div className="analytics-card">
-                <h3>Queue Statistics</h3>
-                <div className="metric">
-                  <span>Total in Queue</span>
-                  <strong>{queue.length}</strong>
-                </div>
-                <div className="metric">
-                  <span>High Priority</span>
-                  <strong>{queue.filter(q => q.priority === 'High').length}</strong>
-                </div>
-                <div className="metric">
-                  <span>Medium Priority</span>
-                  <strong>{queue.filter(q => q.priority === 'Medium').length}</strong>
-                </div>
-                <div className="metric">
-                  <span>Low Priority</span>
-                  <strong>{queue.filter(q => q.priority === 'Low').length}</strong>
-                </div>
+              <div style={{ padding: '1.5rem', background: '#fcd34d', borderRadius: '12px', textAlign: 'center' }}>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Pending Appointments</p>
+                <strong style={{ fontSize: '2.5rem', color: '#78350f', display: 'block', marginTop: '0.5rem' }}>
+                  {analyticsData.pendingAppointments}
+                </strong>
               </div>
-
-              <div className="analytics-card">
-                <h3>System Overview</h3>
-                <div className="metric">
-                  <span>Active Doctors</span>
-                  <strong>{stats.availableDoctors}/{stats.totalDoctors}</strong>
-                </div>
-                <div className="metric">
-                  <span>Total Patients</span>
-                  <strong>{stats.totalPatients}</strong>
-                </div>
-                <div className="metric">
-                  <span>System Occupancy</span>
-                  <strong>{Math.round((queue.length / 50) * 100)}%</strong>
-                </div>
+              <div style={{ padding: '1.5rem', background: '#a7f3d0', borderRadius: '12px', textAlign: 'center' }}>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Approved Appointments</p>
+                <strong style={{ fontSize: '2.5rem', color: '#065f46', display: 'block', marginTop: '0.5rem' }}>
+                  {analyticsData.approvedAppointments}
+                </strong>
+              </div>
+              <div style={{ padding: '1.5rem', background: '#dbeafe', borderRadius: '12px', textAlign: 'center' }}>
+                <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Total Doctors</p>
+                <strong style={{ fontSize: '2.5rem', color: '#1e40af', display: 'block', marginTop: '0.5rem' }}>
+                  {analyticsData.totalDoctors}
+                </strong>
               </div>
             </div>
-          </div>
+          </section>
         )}
-      </section>
+      </main>
+
+      <footer className="app-footer">MedPulse - Designed for Indian hospitals - 2026</footer>
     </div>
   )
 }
