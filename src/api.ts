@@ -1,4 +1,4 @@
-﻿const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+﻿const API_BASE_URL = 'https://medpulse-1.onrender.com'
 
 type RequestOptions = RequestInit & { json?: unknown }
 
