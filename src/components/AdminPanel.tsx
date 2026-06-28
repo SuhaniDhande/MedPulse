@@ -91,7 +91,7 @@ setAnalyticsData({
       console.error('Error rescheduling appointment:', error)
     }
   }
-
+  // reedeploy again
   const handleUpdatePriority = (patientId: string) => {
     setPatients(patients.map(p => 
       p.id === patientId ? { ...p, priority: newPriority } : p
