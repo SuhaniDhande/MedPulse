@@ -46,8 +46,13 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
       // Fetch appointments
       const appointmentsRes = await api.getAdminOverview()
       setAppointments(appointmentsRes.appointments)
-      setAnalyticsData(appointmentsRes.stats)
-      
+setAnalyticsData({
+  totalPatients: appointmentsRes.stats.totalPatients || 0,
+  admittedPatients: 0,
+  pendingAppointments: appointmentsRes.stats.waiting || 0,
+  approvedAppointments: 0,
+  totalDoctors: appointmentsRes.stats.totalDoctors || 0,
+})      
       // Mock patients data - In a real app, you'd fetch this from your API
       const mockPatients: Patient[] = [
         { id: '1', name: 'John Doe', age: 45, phone: '9876543210', department: 'Cardiology', status: 'admitted', appointmentTime: '10:00 AM', priority: 'high', assignedDoctor: 'Dr. Smith' },
@@ -95,7 +100,7 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
   }
 
   const pendingAppointments = appointments.filter(a => a.status === 'pending')
-  const confirmedAppointments = appointments.filter(a => a.status === 'confirmed')
+  // const confirmedAppointments = appointments.filter(a => a.status === 'confirmed')
 
   return (
     <div className="app-shell">
